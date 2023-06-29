@@ -9,3 +9,5 @@ jobs:
       run: |
         docker build -t my-apache-app .
         docker run -d --name my-apache-container -p 80:80 my-apache-app
+ - name: Wait for Apache server to start
+    run: sleep 10
