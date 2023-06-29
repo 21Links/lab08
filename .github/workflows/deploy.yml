@@ -12,3 +12,7 @@ jobs:
           docker run -d --name my-apache-container -p 80:80 my-apache-app
  - name: Wait for Apache server to start
         run: sleep 10
+ - name: Get Apache index.html
+        run: |
+          mkdir apache-artifacts
+          wget -O apache-artifacts/index.html http://localhost
