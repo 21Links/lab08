@@ -5,3 +5,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+- name: Build and run Docker container
+      run: |
+        docker build -t my-apache-app .
+        docker run -d --name my-apache-container -p 80:80 my-apache-app
