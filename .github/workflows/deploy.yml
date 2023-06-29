@@ -1,0 +1,31 @@
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Добавьте шаги для установки Docker и его зависимости, если требуется
+
+      - name: Build and run Docker container
+        run: |
+          docker build -t my-apache-app .
+          docker run -d --name my-apache-container -p 80:80 my-apache-app
+           # Подождите, чтобы веб-сервер Apache полностью запустился
+      - name: Wait for Apache server to start
+        run: sleep 10
+
+      # Получите стартовую страницу веб-сервера Apache
+      - name: Get Apache index.html
+        run: |
+          mkdir apache-artifacts
+          wget -O apache-artifacts/index.html http://localhost
+           - name: Archive Apache artifacts
+        run: tar -czf apache-artifacts.tar.gz apache-artifacts
+
+      - name: Publish artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: apache-artifacts
+          path: apache-artifacts.tar.gz
