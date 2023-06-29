@@ -15,3 +15,11 @@ jobs:
     run: |
       mkdir apache-artifacts
       curl http://localhost -o apache-artifacts/index.html
+- name: Archive Apache artifacts
+    run: tar -czf apache-artifacts.tar.gz apache-artifacts
+
+  - name: Publish artifacts
+    uses: actions/upload-artifact@v2
+    with:
+      name: apache-artifacts
+      path: apache-artifacts.tar.gz
