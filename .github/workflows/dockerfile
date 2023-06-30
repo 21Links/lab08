@@ -1,0 +1,48 @@
+name: Deploy Apache Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Загрузка кода и установка Docker
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Docker
+      uses: docker/setup-docker@v2
+      
+    # Сборка Docker-образа
+    - name: Build Docker image
+      run: docker build -t apache-server .
+      
+    # Запуск Docker-контейнера
+    - name: Start Docker container
+      run: docker run -d -p 80:80 --name apache-container apache-server
+      
+    # Ожидание запуска контейнера
+    - name: Wait for container to start
+      run: |
+        while [ "$(curl -s -o /dev/null -w '%{http_code}' localhost)" != "200" ]; do
+          sleep 5
+        done
+      
+    # Получение стартовой страницы
+    - name: Get Apache index page
+      run: curl -o index.html localhost
+    
+    # Создание артефакта tar
+    - name: Create tar artifact
+      run: tar czf apache-artifact.tar.gz index.html
+      
+    # Загрузка артефакта в GitHub Actions
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: apache-artifact
+        path: apache-artifact.tar.gz
